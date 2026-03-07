@@ -38,6 +38,13 @@ public class Bookingjdbc {
         }
     }
 
+    public boolean dropTable() throws SQLException {
+        String sql = "DROP TABLE IF EXISTS booking CASCADE;";
+        try (Statement stmt = this.connection.createStatement()) {
+            return stmt.execute(sql);
+        }
+    }
+
     // =========================
     // CREATE
     // =========================

@@ -34,6 +34,13 @@ public class Ratingjdbc {
         }
     }
 
+    public boolean dropTable() throws SQLException {
+        String sql = "DROP TABLE IF EXISTS rating CASCADE;";
+        try (Statement stmt = this.connection.createStatement()) {
+            return stmt.execute(sql);
+        }
+    }
+
     // =========================
     // CREATE
     // =========================

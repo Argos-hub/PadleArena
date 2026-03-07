@@ -37,7 +37,7 @@ public class Userbean {
         }
     }
 
-    public boolean register(String username, String password) {
+    public boolean register(String username, String password, String firstName, String lastName, String email, String phone) {
         try {
             Connection conn = Connectionmng.getSharedConnection();
             Userjdbc userJdbc = new Userjdbc(conn);
@@ -47,7 +47,7 @@ public class Userbean {
                 this.errorMessage = "Benutzername bereits vergeben.";
                 return false;
             }
-            User newUser = new User(username, password);
+            User newUser = new User(username, password, firstName, lastName, email, phone);
             userJdbc.createUser(newUser);
             this.user = newUser;
             this.errorMessage = null;

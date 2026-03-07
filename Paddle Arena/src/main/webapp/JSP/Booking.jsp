@@ -21,14 +21,49 @@
     <meta charset="UTF-8">
     <title>Padel Colosseum - Buchungen</title>
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/CSS/Booking.css" />
+    <style>
+        .navbar {
+            background-color: #000000;
+            padding: 25px 40px;
+            min-height: 110px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            margin: 0 20px;
+            font-size: 16px;
+            font-weight: 500;
+        }
+        .navbar a:hover {
+            text-decoration: underline;
+        }
+        .navbar img {
+            height: 90px;
+            margin-right: 40px;
+            cursor: pointer;
+        }
+        .navbar > div {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .navbar > div:last-child {
+            gap: 15px;
+        }
+    </style>
 </head>
 <body>
     <div class="navbar">
-        <span class="brand">Padel Colosseum</span>
+        <img src="${pageContext.request.contextPath}/img/logo.png" alt="Padel Colosseum Logo">
         <div>
-            <a href="/Padle_Arena/JSP/Startseite.jsp">Startseite</a>
-            <a href="${pageContext.request.contextPath}/BookingServlet">Buchungen</a>
+            <a href="${pageContext.request.contextPath}/JSP/Startseite.jsp">Startseite</a>
             <a href="${pageContext.request.contextPath}/RatingServlet">Bewertungen</a>
+            <a href="${pageContext.request.contextPath}/BookingServlet">Buchungen</a>
+            
         </div>
         <div>
             <span style="color:white">Hallo, <%= userbean.getUser().getUsername() %></span> |
@@ -67,34 +102,49 @@
         </div>
 
         <div class="card">
-            <h2>Alle Buchungen</h2>
-            <% if (bookingbean != null && !bookingbean.getBookings().isEmpty()) { %>
+            <h2>Meine Buchungen</h2>
+            <% 
+            if (bookingbean != null && !bookingbean.getBookings().isEmpty()) { 
+                // Filter bookings to show only current user's bookings
+                String currentUsername = userbean.getUser().getUsername();
+                boolean hasUserBookings = false;
+                
+                for (Booking b : bookingbean.getBookings()) {
+                    if (b.getUser().getUsername().equals(currentUsername)) {
+                        hasUserBookings = true;
+                        break;
+                    }
+                }
+                
+                if (hasUserBookings) {
+            %>
                 <table>
                     <tr>
                         <th>ID</th>
-                        <th>Benutzer</th>
                         <th>Platz</th>
                         <th>Start</th>
                         <th>Ende</th>
                         <th>Aktion</th>
                     </tr>
-                    <% for (Booking b : bookingbean.getBookings()) { %>
+                    <% for (Booking b : bookingbean.getBookings()) { 
+                        if (b.getUser().getUsername().equals(currentUsername)) { %>
                         <tr>
                             <td><%= b.getBookingId() %></td>
-                            <td><%= b.getUser().getUsername() %></td>
                             <td><%= b.getCourt().getName() %></td>
                             <td><%= b.getStart().format(fmt) %></td>
                             <td><%= b.getEnde().format(fmt) %></td>
                             <td>
-                                <% if (b.getUser().getUsername().equals(userbean.getUser().getUsername())) { %>
-                                    <a href="${pageContext.request.contextPath}/BookingServlet?action=delete&bookingId=<%= b.getBookingId() %>" class="btn btn-danger">Loeschen</a>
-                                <% } %>
+                                <a href="${pageContext.request.contextPath}/BookingServlet?action=delete&bookingId=<%= b.getBookingId() %>" class="btn btn-danger">Loeschen</a>
                             </td>
                         </tr>
-                    <% } %>
+                    <% } 
+                    } %>
                 </table>
             <% } else { %>
-                <p>Keine Buchungen vorhanden.</p>
+                <p>Du hast noch keine Buchungen.</p>
+            <% }
+            } else { %>
+                <p>Du hast noch keine Buchungen.</p>
             <% } %>
         </div>
     </div>

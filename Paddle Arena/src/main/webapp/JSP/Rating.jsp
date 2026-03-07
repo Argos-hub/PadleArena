@@ -15,16 +15,51 @@
     <meta charset="UTF-8">
     <title>Padel Colosseum - Bewertungen</title>
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/CSS/Rating.css" />
+    <style>
+        .navbar {
+            background-color: #000000;
+            padding: 25px 40px;
+            min-height: 110px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            margin: 0 20px;
+            font-size: 16px;
+            font-weight: 500;
+        }
+        .navbar a:hover {
+            text-decoration: underline;
+        }
+        .navbar img {
+            height: 90px;
+            margin-right: 40px;
+            cursor: pointer;
+        }
+        .navbar > div {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .navbar > div:last-child {
+            gap: 15px;
+        }
+    </style>
 </head>
 <body>
     <div class="navbar">
-        <span class="brand">Padel Colosseum</span>
+        <img src="${pageContext.request.contextPath}/img/logo.png" alt="Padel Colosseum Logo">
         <div>
-            <a href="/Padle_Arena/JSP/Startseite.jsp">Startseite</a>
+            <a href="${pageContext.request.contextPath}/JSP/Startseite.jsp">Startseite</a>
+            <a href="${pageContext.request.contextPath}/RatingServlet">Bewertungen</a>
             <% if (loggedIn) { %>
                 <a href="${pageContext.request.contextPath}/BookingServlet">Buchungen</a>
             <% } %>
-            <a href="${pageContext.request.contextPath}/RatingServlet">Bewertungen</a>
+            
         </div>
         <div>
             <% if (loggedIn) { %>

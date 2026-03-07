@@ -1,9 +1,16 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="de.hwg_lu.bwi520.bean.Userbean" %>
+<%@ page import="de.hwg_lu.bwi520.bean.Ratingbean" %>
 <%
     Userbean userbean = (Userbean) session.getAttribute("userbean");
     boolean loggedIn = (userbean != null && userbean.isLoggedIn());
     String username = loggedIn ? userbean.getUser().getUsername() : "";
+    
+    // Load average rating
+    Ratingbean ratingbean = new Ratingbean();
+    ratingbean.loadAllRatings();
+    double averageRating = ratingbean.getAverageRating();
+    int ratingCount = ratingbean.getRatings().size();
 %>
 <!DOCTYPE html>
 <html lang="de">
@@ -71,6 +78,10 @@
         .court-card h3 { margin-bottom: 10px; }
         .court-card p { color: #555; }
         html { scroll-behavior: smooth; }
+        footer a:hover {
+            color: #ffc107 !important;
+            transition: color 0.3s ease;
+        }
         @media (max-width: 900px) {
             .about-section { flex-direction: column; }
             .about-section .about-img { margin-top: 30px; }
@@ -91,12 +102,13 @@
                     <ul class="navbar-nav ms-auto">
                         <li class="nav-item"><a class="nav-link" href="#hero">Startseite</a></li>
                         <li class="nav-item"><a class="nav-link" href="#about">Über uns</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#ratings">Bewertungen</a></li>
                         <li class="nav-item"><a class="nav-link" href="#courts">Courts</a></li>
-                        <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/RatingServlet">Bewertungen</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#pricing">Preise</a></li>
                         <% if (loggedIn) { %>
                         <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/BookingServlet">Buchungen</a></li>
                         <% } %>
-                        <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/JSP/Impressum.jsp">Impressum</a></li>
+                        
                         <% if (loggedIn) { %>
                         <li class="nav-item"><span class="nav-link">Hallo, <%= username %></span></li>
                         <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/LoginServlet?action=logout">Abmelden</a></li>
@@ -110,11 +122,15 @@
     </header>
 
     <section class="hero-section" id="hero">
-        <h1>Wilkommen beim Padel Colosseum</h1>
+        <h1>Willkommen beim Padel Colosseum</h1>
         <p>Padel Courts, Turniere, und Spaß jetzt anmelden und buchen.</p>
         <div>
-            <a href="${pageContext.request.contextPath}/LoginServlet" class="btn btn-primary btn-lg">Login</a>
-            <a href="${pageContext.request.contextPath}/LoginServlet?action=register" class="btn btn-success btn-lg">Register</a>
+            <% if (loggedIn) { %>
+                <h2 style="color: #fff; margin-bottom: 30px;">Hallo <%= username %>!</h2>
+            <% } else { %>
+                <a href="${pageContext.request.contextPath}/LoginServlet" class="btn btn-primary btn-lg">Login</a>
+                
+            <% } %>
         </div>
     </section>
 
@@ -130,6 +146,8 @@
             <img src="${pageContext.request.contextPath}/img/outdoor.png" alt="Padel Colosseum" />
         </div>
     </section>
+
+    
 
     <section class="courts-section" id="courts">
         <h2>Unsere Courts</h2>
@@ -150,10 +168,67 @@
         </div>
     </section>
 
-    <footer class="bg-dark text-light py-4 mt-5">
-        <div class="container text-center">
-            &copy; 2026 Padel Colosseum. Alle Rechte vorbehalten.
+    <section class="pricing-section" id="pricing" style="padding: 60px 0; background: #f8f9fa;">
+        <div class="container">
+            <h2 style="text-align: center; margin-bottom: 40px;">Preise</h2>
+            <div style="max-width: 600px; margin: 0 auto; background: #fff; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.15); padding: 40px; text-align: center;">
+                <div style="font-size: 3rem; font-weight: bold; color: #0d6efd; margin-bottom: 20px;">30€ <span style="font-size: 1.5rem; color: #555;">/ Stunde</span></div>
+                <p style="font-size: 1.1rem; color: #333; margin-bottom: 15px;">Professionelle Courts zu fairen Preisen</p>
+                <p style="font-size: 0.95rem; color: #666; margin-bottom: 30px;">Maximale Buchungszeit: 2 Stunden</p>
+                <% if (loggedIn) { %>
+                    <a href="${pageContext.request.contextPath}/BookingServlet" class="btn btn-primary btn-lg">Jetzt buchen</a>
+                <% } else { %>
+                    <a href="${pageContext.request.contextPath}/LoginServlet" class="btn btn-primary btn-lg">Login zum Buchen</a>
+                <% } %>
+            </div>
         </div>
+    </section>
+
+<section class="rating-section" id="ratings" style="padding: 40px 0; background: #fff; text-align: center;">
+        <div class="container">
+            <h2 style="margin-bottom: 20px;">Kundenbewertungen</h2>
+            <div style="max-width: 400px; margin: 0 auto; background: #f8f9fa; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); padding: 25px;">
+                <div style="font-size: 2.5rem; font-weight: bold; color: #ffc107; margin-bottom: 8px;">
+                    <%= String.format("%.1f", averageRating) %> / 5.0
+                </div>
+                <div style="font-size: 1.5rem; margin-bottom: 10px; color: #ffc107;">
+                    <% 
+                    int fullStars = (int) averageRating;
+                    boolean hasHalfStar = (averageRating - fullStars) >= 0.5;
+                    for (int i = 0; i < fullStars; i++) { %>★<% }
+                    if (hasHalfStar) { %>☆<% }
+                    for (int i = fullStars + (hasHalfStar ? 1 : 0); i < 5; i++) { %>☆<% }
+                    %>
+                </div>
+                <p style="font-size: 0.95rem; color: #666; margin-bottom: 15px;">
+                    <%= ratingCount %> <%= ratingCount == 1 ? "Bewertung" : "Bewertungen" %>
+                </p>
+                <a href="${pageContext.request.contextPath}/RatingServlet" class="btn btn-primary">Alle Bewertungen ansehen</a>
+            </div>
+        </div>
+    </section>
+    <footer class="bg-dark text-light py-5 mt-5">
+        <div class="container">
+            <div class="row">
+               
+                <div class="col-md-4 mb-3">
+                    <h5 style="color: #ffc107; margin-bottom: 15px;">Kontakt</h5>
+                    <p style="font-size: 0.9rem; line-height: 1.8; margin-bottom: 0;">
+                        <strong>Padel Colosseum 24/7 GmbH</strong><br>
+                        Ernst-Boehe-Straße<br>
+                        Ludwigshafen<br>
+                        Telefon: 0621 123456<br>
+                    </p>
+                </div>
+                <div class="col-md-4 mb-3">
+                    
+                    <ul style="list-style: none; padding: 0; font-size: 0.9rem; line-height: 2;">
+                        <li><a href="#hero" style="color: #adb5bd; text-decoration: none;">Zurück zu Startseite</a></li>
+                    </ul>
+                </div>
+                </div>
+                    </div>
+     
     </footer>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>

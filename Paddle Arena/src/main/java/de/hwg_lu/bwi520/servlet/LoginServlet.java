@@ -45,13 +45,19 @@ public class LoginServlet extends HttpServlet {
         Userbean userbean = new Userbean();
 
         if ("register".equals(action)) {
+            // Extract personal data fields
+            String firstName = request.getParameter("firstName");
+            String lastName = request.getParameter("lastName");
+            String email = request.getParameter("email");
+            String phone = request.getParameter("phone");
+            
             // Password confirmation check
             if (password == null || !password.equals(passwordConfirm)) {
                 request.setAttribute("error", "Passwörter stimmen nicht überein.");
                 request.getRequestDispatcher("JSP/Register.jsp").forward(request, response);
                 return;
             }
-            if (userbean.register(username, password)) {
+            if (userbean.register(username, password, firstName, lastName, email, phone)) {
                 HttpSession session = request.getSession();
                 session.setAttribute("userbean", userbean);
                 response.sendRedirect("JSP/Startseite.jsp");

@@ -31,6 +31,13 @@ public class Courtsjdbc {
         }
     }
 
+    public boolean dropTable() throws SQLException {
+        String sql = "DROP TABLE IF EXISTS courts CASCADE;";
+        try (Statement stmt = this.connection.createStatement()) {
+            return stmt.execute(sql);
+        }
+    }
+
     // =========================
     // CREATE
     // =========================

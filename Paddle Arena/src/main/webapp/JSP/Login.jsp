@@ -8,8 +8,30 @@
     <meta charset="UTF-8">
     <title>Padel Colosseum - Anmelden</title>
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/CSS/Login.css" />
+    <style>
+        .navbar {
+            padding: 25px 40px;
+            min-height: 110px;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+        }
+        .navbar img {
+            height: 90px;
+            cursor: pointer;
+        }
+        .navbar a {
+            text-decoration: none;
+        }
+    </style>
 </head>
 <body>
+    <div class="navbar">
+        <a href="${pageContext.request.contextPath}/JSP/Startseite.jsp">
+            <img src="${pageContext.request.contextPath}/img/logo.png" alt="Padel Colosseum Logo">
+        </a>
+    </div>
+
     <div class="login-box">
         <h2>Anmelden</h2>
         <% if (error != null) { %>
@@ -28,8 +50,8 @@
             <button type="submit" class="btn btn-primary">Anmelden</button>
         </form>
         <div class="link">
-            <p>Noch kein Konto? <a href="JSP/Register.jsp">Registrieren</a></p>
-            <p><a href="Padle_Arena/JSP/Startseite.jsp">Zurueck zur Startseite</a></p>
+            <p>Noch kein Konto? <a href="${pageContext.request.contextPath}/JSP/Register.jsp">Registrieren</a></p>
+            <p><a href="${pageContext.request.contextPath}/JSP/Startseite.jsp">Zurueck zur Startseite</a></p>
         </div>
     </div>
 </body>
